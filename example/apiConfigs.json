@@ -1,0 +1,32 @@
+[
+  {
+    "name": "wenwen-ai",
+    "config": {
+      "env": {
+        "ANTHROPIC_AUTH_TOKEN": "sk-hsg5hOghxxxxxxxHEk1rKHRxx",
+        "ANTHROPIC_BASE_URL": "https://code.wenwen-ai.com",
+        "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"
+      },
+      "permissions": {
+        "allow": [],
+        "deny": []
+      },
+      "model": "opus"
+    }
+  },
+  {
+    "name": "zone",
+    "config": {
+      "env": {
+        "ANTHROPIC_AUTH_TOKEN": "sk-xxxxxxxxxxxx",
+        "ANTHROPIC_BASE_URL": "https://zone.veloera.org/pg",
+        "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"
+      },
+      "permissions": {
+        "allow": [],
+        "deny": []
+      },
+      "model": "opus"
+    }
+  }
+]
