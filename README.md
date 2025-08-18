@@ -3,12 +3,10 @@
 一个用于在不同的 Claude Code API 配置之间进行切换的命令行工具。
 ## Claude code 中转推荐
 1. 注册送 10刀,每天签到(需要充值 30 元)送额度  https://claude.husan97x.xyz/register?aff=k02G    
-1. 每天3000积分  https://www.aicodemirror.com/register?invitecode=8KTOWC  
-	- 高峰期免费用户用不了
-1. 注册送3000积分  https://www.claude-code.top/register?inviteCode=8KTOWC  
-1. 注册送1000point  https://aicodeditor.com/register?invitecode=VHE6FK  
-	- 相当于20刀左右
-1. 注册送5刀  https://ai-router.plugins-world.cn/register?aff=VvoS
+1. 每天3000积分(20刀左右)  https://www.aicodemirror.com/register?invitecode=8KTOWC  
+1. 注册送3000积分  https://www.claude-code.top/register?inviteCode=8KTOWC  
+1. 注册送1000point(20刀左右)  https://aicodeditor.com/register?invitecode=VHE6FK  
+1. 注册送5刀  https://ai-router.plugins-world.cn/register?aff=VvoS
 1. 注册 25刀 https://code.wenwen-ai.com/register?aff=a0FY
 1. 注册 20刀 https://a-generic.be-a.dev/register?aff=aVGl
 
