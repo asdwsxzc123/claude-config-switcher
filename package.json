@@ -1,6 +1,6 @@
 {
-  "name": "claude-config-switcher",
-  "version": "1.1.0",
+  "name": "claude-code-switcher",
+  "version": "1.0.1",
   "description": "A command-line tool for switching between different Claude API configurations",
   "main": "index.js",
   "bin": {
@@ -20,13 +20,13 @@
   ],
   "author": "gweid",
   "license": "MIT",
-  "homepage": "https://github.com/gweid/claude-config-switcher#readme",
+  "homepage": "https://github.com/asdwsxzc123/claude-config-switcher#readme",
   "bugs": {
-    "url": "https://github.com/gweid/claude-config-switcher/issues"
+    "url": "https://github.com/asdwsxzc123/claude-config-switcher/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gweid/claude-config-switcher.git"
+    "url": "git+https://github.com/asdwsxzc123/claude-config-switcher.git"
   },
   "engines": {
     "node": ">=12.0.0"
@@ -34,6 +34,7 @@
   "dependencies": {
     "chalk": "^4.1.2",
     "commander": "^11.1.0",
-    "inquirer": "^8.2.5"
+    "inquirer": "^8.2.5",
+    "webdav": "^5.3.0"
   }
 }
