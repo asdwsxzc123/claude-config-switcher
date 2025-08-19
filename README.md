@@ -1,15 +1,12 @@
 # Claude配置切换工具 (CCS)
 
 一个用于在不同的 Claude Code API 配置之间进行切换的命令行工具。
-## Claude code 中转推荐
-1. 注册送 10刀,每天签到(需要充值 30 元)送额度  https://claude.husan97x.xyz/register?aff=k02G    
-1. 每天3000积分(20刀左右)  https://www.aicodemirror.com/register?invitecode=8KTOWC  
-1. 注册送3000积分  https://www.claude-code.top/register?inviteCode=8KTOWC  
-1. 注册送1000point(20刀左右)  https://aicodeditor.com/register?invitecode=VHE6FK  
+## Claude code 中转可用推荐 (更新时间 2025-08-19)
+- 使用邀请码送的积分会多一些。
+1. 注册送 10刀,每天签到(需要充值 30 元)送额度  https://claude.husan97x.xyz/register?aff=k02G  
+1. 每天3000积分(20刀左右)  https://www.aicodemirror.com/register?invitecode=8KTOWC
+1. 注册送1000point(20刀左右)  https://aicodeditor.com/register?invitecode=VHE6FK
 1. 注册送5刀  https://ai-router.plugins-world.cn/register?aff=VvoS
-1. 注册 25刀 https://code.wenwen-ai.com/register?aff=a0FY
-1. 注册 20刀 https://a-generic.be-a.dev/register?aff=aVGl
-
 
 
 ## 功能
@@ -139,7 +136,7 @@ ccs add my-api sk-xxxxxxxxxxxxxxxx https://api.example.com
 # 添加wenwen-ai配置
 ccs add wenwen-ai sk-xxxxxxxxxxxxxxxx https://code.wenwen-ai.com
 
-# 添加zone配置  
+# 添加zone配置
 ccs add zone sk-xxxxxxxxxxxxxxxx https://zone.veloera.org/pg
 ```
 
@@ -213,9 +210,9 @@ ccs list
 ```
 ? 请选择要切换的配置: (Use arrow keys)
 > 1. [wenwen-ai  ] sk-xxxx...XXXX https://code.wenwen-ai.com       (当前)
-  2. [zone       ] sk-yyyy...YYYY https://zone.veloera.org/pg      
-  3. [co.yes.vg  ] sk-zzzz...ZZZZ https://co.yes.vg/api           
-  4. [a-generic  ] sk-aaaa...AAAA https://a-generic.be-a.dev/api  
+  2. [zone       ] sk-yyyy...YYYY https://zone.veloera.org/pg
+  3. [co.yes.vg  ] sk-zzzz...ZZZZ https://co.yes.vg/api
+  4. [a-generic  ] sk-aaaa...AAAA https://a-generic.be-a.dev/api
   ──────────────
   输入序号...
 
@@ -260,7 +257,7 @@ ccs open dir
 
 此命令支持跨平台：
 - **macOS**: 使用 `open` 命令
-- **Windows**: 使用 `start` 命令  
+- **Windows**: 使用 `start` 命令
 - **Linux**: 使用 `xdg-open` 命令
 
 #### 直接设置当前使用的API配置
