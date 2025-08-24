@@ -10,6 +10,7 @@ const { ensureConfigDir, showCurrentConfig, addApiConfig } = require('./lib/conf
 const { configureWebdav, uploadConfigs, downloadConfigs, listRemoteFiles, syncConfigs } = require('./lib/webdav');
 const { listAndSelectConfig, setConfig } = require('./lib/interactive');
 const { VERSION, openConfig, setupErrorHandling } = require('./lib/utils');
+const { showCurrentModel, setModelInteractive, setModelDirect, listModels } = require('./lib/model');
 
 // 设置命令行程序
 program
@@ -55,6 +56,35 @@ program
   .action((type) => {
     ensureConfigDir();
     openConfig(type);
+  });
+
+// Model 相关命令
+program
+  .command('model [modelName]')
+  .description('设置或查看当前模型 (可选: 直接指定模型名称，使用 "delete" 删除模型设置)')
+  .action((modelName) => {
+    ensureConfigDir();
+    if (modelName) {
+      setModelDirect(modelName);
+    } else {
+      setModelInteractive();
+    }
+  });
+
+program
+  .command('model-current')
+  .description('显示当前设置的模型')
+  .action(() => {
+    ensureConfigDir();
+    showCurrentModel();
+  });
+
+program
+  .command('model-list')
+  .description('列出所有可用的模型')
+  .action(() => {
+    ensureConfigDir();
+    listModels();
   });
 
 // WebDAV 子命令组

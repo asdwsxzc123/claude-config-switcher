@@ -3,9 +3,9 @@
 一个用于在不同的 Claude Code API 配置之间进行切换的命令行工具。
 ## Claude code 中转可用推荐 (更新时间 2025-08-19)
 - 使用邀请码送的积分会多一些。
-1. 注册送 10刀,每天签到(需要充值 30 元)送额度  https://claude.husan97x.xyz/register?aff=k02G  
-1. 每天3000积分(20刀左右)  https://www.aicodemirror.com/register?invitecode=8KTOWC
-1. 注册送1000point(20刀左右)  https://aicodeditor.com/register?invitecode=VHE6FK
+1. 注册送5刀,每天签到(需要充值 30 元)送额度  https://claude.husan97x.xyz/register?aff=k02G  
+1. 每天3000积分  https://www.aicodemirror.com/register?invitecode=8KTOWC
+1. 注册送1000point  https://aicodeditor.com/register?invitecode=VHE6FK
 1. 注册送5刀  https://ai-router.plugins-world.cn/register?aff=VvoS
 
 
@@ -21,6 +21,10 @@
 - 切换当前使用的API配置
 - 显示当前配置
 - 显示版本信息
+- **模型设置功能**
+  - 交互式选择或直接设置模型
+  - 支持删除模型设置
+  - 查看当前模型和可用模型列表
 - **Webdva网盘集成**
   - 配置Webdva网盘连接设置
   - 上传配置文件到Webdva网盘
@@ -95,7 +99,7 @@ npm install -g claude-code-switcher
     "allow": [],
     "deny": []
   },
-  "model": "opus"
+  "model": "claude-opus-4-20250514"
 }
 ```
 
@@ -297,6 +301,56 @@ ccs use 2
 成功切换到配置: zone
 ```
 
+#### 设置模型
+
+```bash
+# 交互式选择模型
+ccs model
+
+# 直接设置模型
+ccs model claude-opus-4-20250514
+
+# 删除模型设置
+ccs model delete
+```
+
+**交互式选择示例：**
+
+```
+? 请选择要设置的模型:
+> claude-opus-4-20250514
+  ──────────────
+  删除模型设置
+  取消
+
+成功设置模型: claude-opus-4-20250514
+```
+
+#### 查看当前模型
+
+```bash
+ccs model-current
+```
+
+输出示例：
+
+```
+当前模型: claude-opus-4-20250514
+```
+
+#### 列出可用模型
+
+```bash
+ccs model-list
+```
+
+输出示例：
+
+```
+可用的模型:
+  - claude-opus-4-20250514 (当前)
+```
+
 #### 配置Webdva网盘设置
 
 ```bash
@@ -348,6 +402,9 @@ Commands:
   use <index>        设置当前使用的API配置
   current            显示当前激活的配置
   open <type>        打开配置文件位置 (type: api|dir)
+  model [modelName]  设置或查看当前模型 (可选: 直接指定模型名称，使用 "delete" 删除模型设置)
+  model-current      显示当前设置的模型
+  model-list         列出所有可用的模型
   webdva-config      配置Webdva网盘设置
   upload             上传配置文件到Webdva网盘
   help [command]     display help for command
