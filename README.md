@@ -62,8 +62,7 @@ npm install -g claude-code-switcher
       "permissions": {
         "allow": [],
         "deny": []
-      },
-      "model": "opus"
+      }
     }
   },
   {
@@ -77,8 +76,7 @@ npm install -g claude-code-switcher
       "permissions": {
         "allow": [],
         "deny": []
-      },
-      "model": "opus"
+      }
     }
   }
 ]
@@ -161,8 +159,7 @@ ccs add zone sk-xxxxxxxxxxxxxxxx https://zone.veloera.org/pg
     "permissions": {
       "allow": [],
       "deny": []
-    },
-    "model": "opus"
+    }
   }
 }
 ```
@@ -234,8 +231,7 @@ ccs list
     "permissions": {
       "allow": [],
       "deny": []
-    },
-    "model": "opus"
+    }
   }
 }
 
@@ -291,8 +287,7 @@ ccs use 2
     "permissions": {
       "allow": [],
       "deny": []
-    },
-    "model": "opus"
+    }
   }
 }
 

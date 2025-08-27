@@ -10,8 +10,7 @@
       "permissions": {
         "allow": [],
         "deny": []
-      },
-      "model": "opus"
+      }
     }
   },
   {
@@ -25,8 +24,7 @@
       "permissions": {
         "allow": [],
         "deny": []
-      },
-      "model": "opus"
+      }
     }
   }
 ]
