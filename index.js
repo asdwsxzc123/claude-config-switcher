@@ -20,6 +20,7 @@ program
 
 program
   .command('list')
+  .alias('ls')
   .description('列出所有可用的API配置并提示选择')
   .action(() => {
     ensureConfigDir();

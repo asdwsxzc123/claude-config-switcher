@@ -40,6 +40,7 @@ ccs webdav upload
 此命令会将以下文件上传到WebDAV网盘：
 - `apiConfigs.json` - API配置列表
 - `settings.json` - 当前激活配置
+- `CLAUDE.md` - Claude配置说明文件
 - `webdav.json` - WebDAV配置信息（密码已掩码）
 
 ### 3. 下载配置文件
@@ -53,6 +54,7 @@ ccs webdav download
 此命令会从WebDAV网盘下载所有配置文件到本地：
 - `apiConfigs.json` - API配置列表
 - `settings.json` - 当前激活配置  
+- `CLAUDE.md` - Claude配置说明文件
 - `webdav.json` - WebDAV配置信息（自动合并本地密码）
 
 ### 4. 列出远程文件
