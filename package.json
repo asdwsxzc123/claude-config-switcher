@@ -1,6 +1,6 @@
 {
   "name": "claude-code-switcher",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "A command-line tool for switching between different Claude API configurations",
   "main": "index.js",
   "bin": {

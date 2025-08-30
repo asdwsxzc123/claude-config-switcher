@@ -6,11 +6,13 @@
  */
 
 const { program } = require('commander');
+const chalk = require('chalk');
 const { ensureConfigDir, showCurrentConfig, addApiConfig } = require('./lib/config');
 const { configureWebdav, uploadConfigs, downloadConfigs, listRemoteFiles, syncConfigs } = require('./lib/webdav');
 const { listAndSelectConfig, setConfig } = require('./lib/interactive');
 const { VERSION, openConfig, setupErrorHandling } = require('./lib/utils');
 const { showCurrentModel, setModelInteractive, setModelDirect, listModels } = require('./lib/model');
+const { addWebhookUrl, showWebhookConfig, removeWebhookConfig } = require('./lib/webhook');
 
 // 设置命令行程序
 program
@@ -172,6 +174,29 @@ program
   .action(async () => {
     ensureConfigDir();
     await syncConfigs();
+  });
+
+// Webhook 相关命令
+program
+  .command('webhook <subcommand> [url]')
+  .description('webhook 相关操作：add <url> | show | remove')
+  .action((subcommand, url) => {
+    ensureConfigDir();
+    
+    switch(subcommand) {
+      case 'add':
+        addWebhookUrl(url);
+        break;
+      case 'show':
+        showWebhookConfig();
+        break;
+      case 'remove':
+        removeWebhookConfig();
+        break;
+      default:
+        console.error(chalk.red(`未知的子命令: ${subcommand}`));
+        console.log(chalk.cyan('可用命令: add <url> | show | remove'));
+    }
   });
 
 // 设置错误处理
