@@ -176,28 +176,6 @@ program
     await syncConfigs();
   });
 
-// Webhook 相关命令
-program
-  .command('webhook <subcommand> [url]')
-  .description('webhook 相关操作：add <url> | show | remove')
-  .action((subcommand, url) => {
-    ensureConfigDir();
-    
-    switch(subcommand) {
-      case 'add':
-        addWebhookUrl(url);
-        break;
-      case 'show':
-        showWebhookConfig();
-        break;
-      case 'remove':
-        removeWebhookConfig();
-        break;
-      default:
-        console.error(chalk.red(`未知的子命令: ${subcommand}`));
-        console.log(chalk.cyan('可用命令: add <url> | show | remove'));
-    }
-  });
 
 // 设置错误处理
 setupErrorHandling(program);
