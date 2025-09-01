@@ -12,7 +12,7 @@ const { configureWebdav, uploadConfigs, downloadConfigs, listRemoteFiles, syncCo
 const { listAndSelectConfig, setConfig } = require('./lib/interactive');
 const { VERSION, openConfig, setupErrorHandling } = require('./lib/utils');
 const { showCurrentModel, setModelInteractive, setModelDirect, listModels } = require('./lib/model');
-const { addWebhookUrl, showWebhookConfig, removeWebhookConfig } = require('./lib/webhook');
+const { addWebhookUrl, showWebhookConfig, removeWebhookConfig, pushWebhookMessage, configureClaudeHooks } = require('./lib/webhook');
 
 // 设置命令行程序
 program
@@ -176,6 +176,91 @@ program
     await syncConfigs();
   });
 
+// Webhook 子命令组
+const webhookCommand = program
+  .command('webhook <subcommand>')
+  .description('Webhook 通知相关操作');
+
+webhookCommand
+  .command('add <url> [name]')
+  .description('添加 webhook URL')
+  .action((url, name) => {
+    ensureConfigDir();
+    addWebhookUrl(url, name);
+  });
+
+webhookCommand
+  .command('list')
+  .description('显示当前 webhook 配置')
+  .action(() => {
+    ensureConfigDir();
+    showWebhookConfig();
+  });
+
+webhookCommand
+  .command('remove')
+  .description('删除 webhook 配置')
+  .action(() => {
+    ensureConfigDir();
+    removeWebhookConfig();
+  });
+
+webhookCommand
+  .command('push <message>')
+  .description('推送自定义消息到所有 webhook')
+  .action(async (message) => {
+    ensureConfigDir();
+    await pushWebhookMessage(message);
+  });
+
+webhookCommand
+  .command('hooks')
+  .description('配置 Claude Code Hooks 监听器')
+  .action(async () => {
+    ensureConfigDir();
+    await configureClaudeHooks();
+  });
+
+// 保留原有的单独命令（兼容性）
+program
+  .command('webhook-add <url> [name]')
+  .description('添加 webhook URL')
+  .action((url, name) => {
+    ensureConfigDir();
+    addWebhookUrl(url, name);
+  });
+
+program
+  .command('webhook-list')
+  .description('显示当前 webhook 配置')
+  .action(() => {
+    ensureConfigDir();
+    showWebhookConfig();
+  });
+
+program
+  .command('webhook-remove')
+  .description('删除 webhook 配置')
+  .action(() => {
+    ensureConfigDir();
+    removeWebhookConfig();
+  });
+
+program
+  .command('webhook-push <message>')
+  .description('推送自定义消息到所有 webhook')
+  .action(async (message) => {
+    ensureConfigDir();
+    await pushWebhookMessage(message);
+  });
+
+program
+  .command('webhook-hooks')
+  .description('配置 Claude Code Hooks 监听器')
+  .action(async () => {
+    ensureConfigDir();
+    await configureClaudeHooks();
+  });
 
 // 设置错误处理
 setupErrorHandling(program);

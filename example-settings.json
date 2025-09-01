@@ -1,0 +1,33 @@
+{
+  "env": {
+    "ANTHROPIC_AUTH_TOKEN": "your-token-here",
+    "ANTHROPIC_BASE_URL": "your-api-endpoint",
+    "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "32000"
+  },
+  "permissions": {
+    "allow": [],
+    "deny": []
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "ExitPlanMode",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npx claude-code-switcher webhook push \"🔔 退出规划模式: 事件触发\\n时间: $(date '+%Y-%m-%d %H:%M:%S')\\n类型: 📋 规划完成\\n详情: 用户确认执行计划\""
+          }
+        ]
+      },
+      {
+        "matcher": "TodoWrite",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if echo \\\"$TOOL_INPUT\\\" | grep -q '\\\"status\\\":\\\"completed\\\"'; then npx claude-code-switcher webhook push \\\"🔔 任务列表更新: 事件触发\\n时间: $(date '+%Y-%m-%d %H:%M:%S')\\n类型: ✅ 任务完成\\n详情: 有任务被标记为完成\\\"; fi"
+          }
+        ]
+      }
+    ]
+  }
+}

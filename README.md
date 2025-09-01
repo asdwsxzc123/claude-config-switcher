@@ -25,10 +25,16 @@
   - 交互式选择或直接设置模型
   - 支持删除模型设置
   - 查看当前模型和可用模型列表
-- **Webdva网盘集成**
-  - 配置Webdva网盘连接设置
-  - 上传配置文件到Webdva网盘
+- **WebDAV网盘集成**
+  - 配置WebDAV网盘连接设置
+  - 上传配置文件到WebDAV网盘
   - 配置切换后可选择同步到网盘
+- **🔔 Webhook通知系统**
+  - 与Claude Code Hooks深度集成
+  - 支持飞书、Slack、企业微信、Discord等主流平台
+  - 智能事件过滤，只推送重要通知
+  - 用户交互和任务完成实时监控
+  - 一键配置，零学习成本
 - 错误处理和帮助提示
 
 ## 安装
@@ -103,14 +109,35 @@ npm install -g claude-code-switcher
 
 **注意**：切换配置时，整个 `settings.json` 文件会被选中配置的 `config` 对象完全替换。
 
-#### 3. webdva.json - Webdva网盘配置（可选）
+#### 3. webdav.json - WebDAV网盘配置（可选）
 
-存储Webdva网盘连接设置，格式如下：
+存储WebDAV网盘连接设置，格式如下：
 
 ```json
 {
-  "url": "https://your-webdva-api.com",
-  "token": "your-access-token"
+  "url": "https://your-webdav-api.com",
+  "username": "your-username",
+  "password": "your-password"
+}
+```
+
+#### 4. webhook.json - Webhook通知配置（可选）
+
+存储webhook通知设置，支持多个webhook并行推送：
+
+```json
+{
+  "webhooks": [
+    {
+      "name": "项目通知",
+      "url": "https://open.feishu.cn/open-apis/bot/v2/hook/your-webhook-id",
+      "enabled": true,
+      "events": ["claude_hooks"],
+      "format": "feishu",
+      "retries": 3,
+      "timeout": 5000
+    }
+  ]
 }
 ```
 
@@ -346,19 +373,54 @@ ccs model-list
   - claude-opus-4-20250514 (当前)
 ```
 
-#### 配置Webdva网盘设置
+#### WebDAV 网盘同步
 
 ```bash
-# 配置Webdva网盘设置
-ccs webdva config
+# WebDAV 子命令方式（推荐）
+ccs webdav config          # 配置WebDAV网盘设置
+ccs webdav upload          # 上传配置到WebDAV网盘
+ccs webdav download        # 从网盘下载配置
+ccs webdav list           # 列出网盘中的文件
+ccs webdav sync           # 双向同步配置
 
-# 上传配置到Webdva网盘
-ccs webdva upload
-
-# 下载网盘
-ccs webdva download
-
+# 兼容性命令
+ccs webdav-config
+ccs webdav-upload
+ccs webdav-download
 ```
+
+#### 🔔 Webhook 通知管理
+
+```bash
+# Webhook 子命令方式（推荐）
+ccs webhook add <url> [name]     # 添加webhook URL
+ccs webhook list                 # 显示当前配置
+ccs webhook push <message>       # 推送测试消息
+ccs webhook hooks               # 配置Claude Code Hooks监听
+ccs webhook remove              # 删除webhook配置
+
+# 兼容性命令
+ccs webhook-add <url> [name]
+ccs webhook-list
+ccs webhook-push <message>
+ccs webhook-hooks
+ccs webhook-remove
+```
+
+**Webhook 快速配置：**
+
+```bash
+# 1. 添加飞书群机器人
+ccs webhook add "https://open.feishu.cn/open-apis/bot/v2/hook/your-id" "项目通知"
+
+# 2. 配置智能监听（交互式向导）
+ccs webhook hooks
+
+# 3. 测试推送
+ccs webhook push "🎉 Claude Code Hooks 配置成功！"
+```
+
+详细使用说明请参考：[Webhook Hooks 使用指南](./docs/WEBHOOK_HOOKS_GUIDE.md)
 
 #### 显示版本信息
 
