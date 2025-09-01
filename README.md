@@ -391,36 +391,84 @@ ccs webdav-download
 
 #### 🔔 Webhook 通知管理
 
+**核心特性：**
+- ✅ **多平台支持**：飞书、Slack、企业微信、Discord等主流协作工具
+- 🎯 **智能过滤**：避免消息轰炸，只推送重要节点通知
+- 🔧 **Claude Code 深度集成**：监听代码操作、任务完成等关键事件
+- 🚀 **一键配置**：交互式向导，零学习成本
+- ⚡ **并行推送**：支持多个webhook同时通知，提升协作效率
+
+**子命令使用：**
+
 ```bash
-# Webhook 子命令方式（推荐）
+# Webhook 管理
 ccs webhook add <url> [name]     # 添加webhook URL
 ccs webhook list                 # 显示当前配置
 ccs webhook push <message>       # 推送测试消息
 ccs webhook hooks               # 配置Claude Code Hooks监听
 ccs webhook remove              # 删除webhook配置
-
-# 兼容性命令
-ccs webhook-add <url> [name]
-ccs webhook-list
-ccs webhook-push <message>
-ccs webhook-hooks
-ccs webhook-remove
 ```
 
-**Webhook 快速配置：**
+**快速配置示例：**
 
 ```bash
-# 1. 添加飞书群机器人
-ccs webhook add "https://open.feishu.cn/open-apis/bot/v2/hook/your-id" "项目通知"
+# 1. 添加通知端点（支持多个平台）
+ccs webhook add "https://open.feishu.cn/open-apis/bot/v2/hook/your-id" "飞书通知"
+ccs webhook add "https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK" "Slack通知"
 
-# 2. 配置智能监听（交互式向导）
+# 2. 配置智能监听（一键设置Claude Code Hooks）
 ccs webhook hooks
 
-# 3. 测试推送
-ccs webhook push "🎉 Claude Code Hooks 配置成功！"
+# 3. 验证配置
+ccs webhook push "🎉 Webhook配置完成，开始智能通知！"
 ```
 
-详细使用说明请参考：[Webhook Hooks 使用指南](./docs/WEBHOOK_HOOKS_GUIDE.md)
+**支持的触发事件：**
+- 📋 **ExitPlanMode**: 用户确认执行计划时
+- ✅ **TodoWrite**: 任务完成状态更新时  
+- 📝 **Edit/Write**: 文件编辑和创建时
+- 🛠️ **Bash**: 重要命令执行时
+- 🔄 **配置切换**: API配置变更时
+
+**智能过滤级别：**
+- 🧠 **智能过滤**（推荐）：仅推送关键节点，避免干扰
+- 🤝 **用户确认类**：专注人工决策时刻
+- ✅ **任务完成类**：跟踪项目进度
+- 📢 **全部事件**：详细监控（调试用）
+
+**应用场景：**
+- 🏢 **团队协作**：实时通知开发进展，关键节点及时沟通
+- 📊 **项目管理**：自动跟踪任务完成，里程碑提醒
+- 🔧 **运维审计**：记录重要操作，确保可追溯性
+- 📈 **效率提升**：自动化工作记录，减少手动汇报
+
+**配置文件结构：**
+
+```json
+{
+  "webhooks": [
+    {
+      "name": "项目通知",
+      "url": "https://open.feishu.cn/open-apis/bot/v2/hook/your-id",
+      "enabled": true,
+      "events": ["claude_hooks"],
+      "format": "feishu",
+      "retries": 3,
+      "timeout": 5000
+    }
+  ]
+}
+```
+
+**故障排除：**
+- **推送失败**: 检查网络连接和webhook URL有效性
+- **消息不显示**: 确认机器人已加入群聊且有发言权限
+- **频率过高**: 使用智能过滤模式，调整监听事件
+
+📖 **详细文档：**
+- [Webhook 基础使用指南](./docs/WEBHOOK.md)
+- [Claude Code Hooks 集成指南](./docs/WEBHOOK_HOOKS_GUIDE.md)
+- [配置文件详解](./docs/WEBHOOK_HOOKS_GUIDE.md#配置文件说明)
 
 #### 显示版本信息
 
