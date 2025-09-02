@@ -1,14 +1,6 @@
 # Claude配置切换工具 (CCS)
 
 一个用于在不同的 Claude Code API 配置之间进行切换的命令行工具。
-## Claude code 中转可用推荐 (更新时间 2025-08-19)
-- 使用邀请码送的积分会多一些。
-1. 注册送5刀,每天签到(需要充值 30 元)送额度  https://claude.husan97x.xyz/register?aff=k02G  
-1. 每天3000积分  https://www.aicodemirror.com/register?invitecode=8KTOWC
-1. 注册送1000point  https://aicodeditor.com/register?invitecode=VHE6FK
-1. 注册送5刀  https://ai-router.plugins-world.cn/register?aff=VvoS
-
-
 ## 功能
 
 - 列出所有可用的API配置并提示选择
@@ -425,7 +417,7 @@ ccs webhook push "🎉 Webhook配置完成，开始智能通知！"
 
 **支持的触发事件：**
 - 📋 **ExitPlanMode**: 用户确认执行计划时
-- ✅ **TodoWrite**: 任务完成状态更新时  
+- ✅ **TodoWrite**: 任务完成状态更新时
 - 📝 **Edit/Write**: 文件编辑和创建时
 - 🛠️ **Bash**: 重要命令执行时
 - 🔄 **配置切换**: API配置变更时
