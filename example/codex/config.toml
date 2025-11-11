@@ -1,0 +1,11 @@
+model_provider = "ccs"
+model = "gpt-5-codex"
+preferred_auth_method = "apikey"
+disable_response_storage = true
+network_access = "enabled"
+
+[model_providers.ccs]
+name = "ccs"
+base_url = "你的 url"
+wire_api = "responses"
+requires_openai_auth = true

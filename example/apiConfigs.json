@@ -4,21 +4,7 @@
     "config": {
       "env": {
         "ANTHROPIC_AUTH_TOKEN": "sk-hsg5hOghxxxxxxxHEk1rKHRxx",
-        "ANTHROPIC_BASE_URL": "https://code.wenwen-ai.com",
-        "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"
-      },
-      "permissions": {
-        "allow": [],
-        "deny": []
-      }
-    }
-  },
-  {
-    "name": "zone",
-    "config": {
-      "env": {
-        "ANTHROPIC_AUTH_TOKEN": "sk-xxxxxxxxxxxx",
-        "ANTHROPIC_BASE_URL": "https://zone.veloera.org/pg",
+        "ANTHROPIC_BASE_URL": "https://demo.com",
         "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"
       },
       "permissions": {

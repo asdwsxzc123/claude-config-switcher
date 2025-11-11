@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 /**
- * Claude配置切换工具
- * 用于在不同的Claude API配置之间进行切换
+ * 多平台配置切换工具
+ * 支持Claude、Codex等多个AI平台的配置切换
  */
 
 const { program } = require('commander');
@@ -11,83 +11,104 @@ const { ensureConfigDir, showCurrentConfig, addApiConfig } = require('./lib/conf
 const { configureWebdav, uploadConfigs, downloadConfigs, listRemoteFiles, syncConfigs } = require('./lib/webdav');
 const { listAndSelectConfig, setConfig } = require('./lib/interactive');
 const { VERSION, openConfig, setupErrorHandling } = require('./lib/utils');
-const { showCurrentModel, setModelInteractive, setModelDirect, listModels } = require('./lib/model');
-const { addWebhookUrl, showWebhookConfig, removeWebhookConfig, pushWebhookMessage, configureClaudeHooks } = require('./lib/webhook');
+const platformManager = require('./lib/platforms/manager');
+const { 
+  listAndSelectMultiPlatformConfig, 
+  setMultiPlatformConfig, 
+  showCurrentMultiPlatformConfig 
+} = require('./lib/multiPlatformConfig');
 
 // 设置命令行程序
 program
   .name('ccs')
-  .description('Claude配置切换工具')
+  .description('多平台AI配置切换工具 (支持: Claude, Codex)')
   .version(VERSION, '-v, --version', '显示版本信息');
 
 program
   .command('list')
   .alias('ls')
   .description('列出所有可用的API配置并提示选择')
-  .action(() => {
-    ensureConfigDir();
-    listAndSelectConfig();
+  .action(async () => {
+    await listAndSelectMultiPlatformConfig();
   });
 
 program
   .command('use <index>')
   .description('设置当前使用的API配置')
-  .action((index) => {
-    ensureConfigDir();
-    setConfig(parseInt(index, 10));
+  .action(async (index) => {
+    await setMultiPlatformConfig(parseInt(index, 10));
   });
 
 program
   .command('current')
   .description('显示当前激活的配置')
   .action(() => {
-    ensureConfigDir();
-    showCurrentConfig();
+    showCurrentMultiPlatformConfig();
   });
 
 program
   .command('add <alias> <key> <url>')
   .description('添加新的API配置')
-  .action((alias, key, url) => {
-    ensureConfigDir();
-    addApiConfig(alias, key, url);
+  .option('-p, --platform <platform>', '指定平台类型 (claude|codex)', 'claude')
+  .action((alias, key, url, options) => {
+    const platform = platformManager.validatePlatform(options.platform);
+    if (!platform) {
+      console.log(chalk.red(`不支持的平台: ${options.platform}`));
+      console.log(chalk.yellow(`支持的平台: ${platformManager.getSupportedPlatforms().join(', ')}`));
+      process.exit(1);
+    }
+    
+    const adapter = platformManager.getPlatform(platform);
+    adapter.ensureConfigDir();
+    
+    try {
+      const config = adapter.addConfig(alias, key, url);
+      console.log(chalk.green(`成功添加${adapter.getDisplayName()}配置: ${alias}`));
+      console.log(chalk.cyan('配置详情:'));
+      console.log(JSON.stringify(config, null, 2));
+    } catch (error) {
+      console.error(chalk.red(`添加配置失败: ${error.message}`));
+      process.exit(1);
+    }
+  });
+
+program
+  .command('platforms')
+  .description('显示所有支持的平台信息')
+  .action(() => {
+    const platforms = platformManager.getPlatformInfo();
+    console.log(chalk.green('支持的平台:'));
+    console.log();
+    
+    platforms.forEach(platform => {
+      console.log(chalk.cyan(`${platform.displayName} (${platform.name})`));
+      console.log(chalk.gray(`  配置目录: ${platform.configDir}`));
+      console.log();
+    });
   });
 
 program
   .command('open <type>')
   .description('打开配置文件位置 (type: api|dir)')
-  .action((type) => {
-    ensureConfigDir();
-    openConfig(type);
-  });
-
-// Model 相关命令
-program
-  .command('model [modelName]')
-  .description('设置或查看当前模型 (可选: 直接指定模型名称，使用 "delete" 删除模型设置)')
-  .action((modelName) => {
-    ensureConfigDir();
-    if (modelName) {
-      setModelDirect(modelName);
-    } else {
-      setModelInteractive();
+  .option('-p, --platform <platform>', '指定平台类型 (claude|codex)', 'claude')
+  .action((type, options) => {
+    const platform = platformManager.validatePlatform(options.platform);
+    if (!platform) {
+      console.log(chalk.red(`不支持的平台: ${options.platform}`));
+      console.log(chalk.yellow(`支持的平台: ${platformManager.getSupportedPlatforms().join(', ')}`));
+      process.exit(1);
     }
-  });
-
-program
-  .command('model-current')
-  .description('显示当前设置的模型')
-  .action(() => {
-    ensureConfigDir();
-    showCurrentModel();
-  });
-
-program
-  .command('model-list')
-  .description('列出所有可用的模型')
-  .action(() => {
-    ensureConfigDir();
-    listModels();
+    
+    // 对于非Claude平台，需要修改openConfig函数
+    if (platform === 'claude') {
+      ensureConfigDir();
+      openConfig(type);
+    } else {
+      const adapter = platformManager.getPlatform(platform);
+      adapter.ensureConfigDir();
+      console.log(chalk.cyan(`${adapter.getDisplayName()}配置目录: ${adapter.getConfigDir()}`));
+      // TODO: 可以扩展openConfig函数以支持其他平台
+    }
   });
 
 // WebDAV 子命令组
@@ -176,91 +197,6 @@ program
     await syncConfigs();
   });
 
-// Webhook 子命令组
-const webhookCommand = program
-  .command('webhook <subcommand>')
-  .description('Webhook 通知相关操作');
-
-webhookCommand
-  .command('add <url> [name]')
-  .description('添加 webhook URL')
-  .action((url, name) => {
-    ensureConfigDir();
-    addWebhookUrl(url, name);
-  });
-
-webhookCommand
-  .command('list')
-  .description('显示当前 webhook 配置')
-  .action(() => {
-    ensureConfigDir();
-    showWebhookConfig();
-  });
-
-webhookCommand
-  .command('remove')
-  .description('删除 webhook 配置')
-  .action(() => {
-    ensureConfigDir();
-    removeWebhookConfig();
-  });
-
-webhookCommand
-  .command('push <message>')
-  .description('推送自定义消息到所有 webhook')
-  .action(async (message) => {
-    ensureConfigDir();
-    await pushWebhookMessage(message);
-  });
-
-webhookCommand
-  .command('hooks')
-  .description('配置 Claude Code Hooks 监听器')
-  .action(async () => {
-    ensureConfigDir();
-    await configureClaudeHooks();
-  });
-
-// 保留原有的单独命令（兼容性）
-program
-  .command('webhook-add <url> [name]')
-  .description('添加 webhook URL')
-  .action((url, name) => {
-    ensureConfigDir();
-    addWebhookUrl(url, name);
-  });
-
-program
-  .command('webhook-list')
-  .description('显示当前 webhook 配置')
-  .action(() => {
-    ensureConfigDir();
-    showWebhookConfig();
-  });
-
-program
-  .command('webhook-remove')
-  .description('删除 webhook 配置')
-  .action(() => {
-    ensureConfigDir();
-    removeWebhookConfig();
-  });
-
-program
-  .command('webhook-push <message>')
-  .description('推送自定义消息到所有 webhook')
-  .action(async (message) => {
-    ensureConfigDir();
-    await pushWebhookMessage(message);
-  });
-
-program
-  .command('webhook-hooks')
-  .description('配置 Claude Code Hooks 监听器')
-  .action(async () => {
-    ensureConfigDir();
-    await configureClaudeHooks();
-  });
 
 // 设置错误处理
 setupErrorHandling(program);
