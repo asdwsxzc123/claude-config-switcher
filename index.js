@@ -12,10 +12,11 @@ const { configureWebdav, uploadConfigs, downloadConfigs, listRemoteFiles, syncCo
 const { listAndSelectConfig, setConfig } = require('./lib/interactive');
 const { VERSION, openConfig, setupErrorHandling } = require('./lib/utils');
 const platformManager = require('./lib/platforms/manager');
-const { 
-  listAndSelectMultiPlatformConfig, 
-  setMultiPlatformConfig, 
-  showCurrentMultiPlatformConfig 
+const {
+  listAndSelectMultiPlatformConfig,
+  setMultiPlatformConfig,
+  showCurrentMultiPlatformConfig,
+  deleteMultiPlatformConfig
 } = require('./lib/multiPlatformConfig');
 
 // 设置命令行程序
@@ -57,10 +58,10 @@ program
       console.log(chalk.yellow(`支持的平台: ${platformManager.getSupportedPlatforms().join(', ')}`));
       process.exit(1);
     }
-    
+
     const adapter = platformManager.getPlatform(platform);
     adapter.ensureConfigDir();
-    
+
     try {
       const config = adapter.addConfig(alias, key, url);
       console.log(chalk.green(`成功添加${adapter.getDisplayName()}配置: ${alias}`));
@@ -70,6 +71,28 @@ program
       console.error(chalk.red(`添加配置失败: ${error.message}`));
       process.exit(1);
     }
+  });
+
+program
+  .command('del [identifier]')
+  .alias('delete')
+  .description('删除API配置（支持交互式选择或直接指定）')
+  .option('-p, --platform <platform>', '指定平台类型 (claude|codex)')
+  .option('-y, --yes', '跳过确认，直接删除')
+  .action(async (identifier, options) => {
+    // 验证平台参数（如果提供）
+    if (options.platform) {
+      const platform = platformManager.validatePlatform(options.platform);
+      if (!platform) {
+        console.log(chalk.red(`不支持的平台: ${options.platform}`));
+        console.log(chalk.yellow(`支持的平台: ${platformManager.getSupportedPlatforms().join(', ')}`));
+        process.exit(1);
+      }
+      options.platform = platform;
+    }
+
+    // 执行删除操作
+    await deleteMultiPlatformConfig(identifier, options);
   });
 
 program
