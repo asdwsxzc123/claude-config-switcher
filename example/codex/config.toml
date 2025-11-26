@@ -1,5 +1,5 @@
 model_provider = "ccs"
-model = "gpt-5-codex"
+model = "gpt-5.1-codex"
 preferred_auth_method = "apikey"
 disable_response_storage = true
 network_access = "enabled"
