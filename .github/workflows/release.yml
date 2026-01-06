@@ -62,10 +62,14 @@ jobs:
         node -c lib/multiPlatformConfig.js
         node -c lib/config.js
 
-    - name: 发布到 NPM
-      run: pnpm publish --no-git-checks
+    - name: 配置 NPM 认证
+      run: |
+        echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > .npmrc
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+    - name: 发布到 NPM
+      run: pnpm publish --no-git-checks
 
     - name: 创建 GitHub Release
       uses: softprops/action-gh-release@v1
