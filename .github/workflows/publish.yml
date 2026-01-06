@@ -1,0 +1,38 @@
+name: Publish to NPM
+
+on:
+  release:
+    types: [created]
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: 设置 Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        registry-url: 'https://registry.npmjs.org'
+
+    - name: 安装依赖
+      run: npm ci
+
+    - name: 语法检查
+      run: |
+        node -c index.js
+        node -c lib/multiPlatformConfig.js
+
+    - name: 发布到 NPM
+      run: npm publish
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+    - name: 通知发布成功
+      if: success()
+      run: |
+        echo "✅ 成功发布到 NPM"
+        echo "版本: $(node -p "require('./package.json').version")"

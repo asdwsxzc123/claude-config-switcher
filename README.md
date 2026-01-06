@@ -20,7 +20,7 @@ npm install -g claude-code-switcher
 ccs add <alias> <key> <url>
 ```
 
-通过命令行直接添加新的API配置到配置文件中。
+通过命令行直接添加新的API配置到配置文件中，**并自动激活该配置**。
 
 **参数说明：**
 - `alias`: 配置别名，用于标识该配置
@@ -30,9 +30,11 @@ ccs add <alias> <key> <url>
 **使用示例：**
 
 ```bash
-# 添加一个新的配置
+# 添加一个新的配置（会自动激活）
 ccs add my-api sk-xxxxxxxxxxxxxxxx https://api.example.com
 ```
+
+**注意：** 添加配置后会自动切换到新配置，无需手动执行 `ccs use` 命令。
 #### 2. 获取API配置列表
 ```bash
 ccs ls

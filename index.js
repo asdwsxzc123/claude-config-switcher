@@ -49,9 +49,9 @@ program
 
 program
   .command('add <alias> <key> <url>')
-  .description('添加新的API配置')
+  .description('添加新的API配置并自动激活')
   .option('-p, --platform <platform>', '指定平台类型 (claude|codex)', 'claude')
-  .action((alias, key, url, options) => {
+  .action(async (alias, key, url, options) => {
     const platform = platformManager.validatePlatform(options.platform);
     if (!platform) {
       console.log(chalk.red(`不支持的平台: ${options.platform}`));
@@ -67,6 +67,70 @@ program
       console.log(chalk.green(`成功添加${adapter.getDisplayName()}配置: ${alias}`));
       console.log(chalk.cyan('配置详情:'));
       console.log(JSON.stringify(config, null, 2));
+      console.log();
+
+      // 检查环境变量（仅对 Claude 平台）
+      if (platform === 'claude') {
+        const fs = require('fs');
+        const os = require('os');
+        const path = require('path');
+
+        const envVarsToCheck = ['ANTHROPIC_BASE_URL', 'ANTHROPIC_AUTH_TOKEN'];
+
+        // 检查常见的 shell 配置文件
+        const configFiles = [
+          path.join(os.homedir(), '.zshrc'),
+          path.join(os.homedir(), '.zshenv'),
+          path.join(os.homedir(), '.zprofile'),
+          path.join(os.homedir(), '.bashrc'),
+          path.join(os.homedir(), '.bash_profile'),
+          path.join(os.homedir(), '.profile')
+        ];
+
+        const foundInShell = [];
+
+        for (const configFile of configFiles) {
+          if (fs.existsSync(configFile)) {
+            try {
+              const content = fs.readFileSync(configFile, 'utf8');
+              // 查找未注释的 export 语句
+              for (const envVar of envVarsToCheck) {
+                const exportPattern = new RegExp(`^\\s*export\\s+${envVar}\\s*=`, 'm');
+                if (exportPattern.test(content)) {
+                  if (!foundInShell.includes(envVar)) {
+                    foundInShell.push(envVar);
+                  }
+                }
+              }
+            } catch (error) {
+              // 忽略读取错误
+            }
+          }
+        }
+
+        if (foundInShell.length > 0) {
+          console.log(chalk.yellow('⚠️  检测到以下环境变量在 shell 配置文件中设置，会覆盖配置文件的设置：'));
+          foundInShell.forEach(v => {
+            console.log(chalk.yellow(`   - ${v}`));
+          });
+          console.log(chalk.yellow('请从 shell 配置文件中删除或注释这些 export 语句'));
+          console.log(chalk.gray('提示: 检查 ~/.zshrc, ~/.bashrc 等文件，然后重启终端或执行 source\n'));
+        }
+      }
+
+      // 自动激活新添加的配置
+      const { getAllConfigs } = require('./lib/multiPlatformConfig');
+      const allConfigs = getAllConfigs();
+
+      // 找到新添加配置的索引（从1开始）
+      const configIndex = allConfigs.findIndex(c =>
+        c.name === alias && c.platform === platform
+      );
+
+      if (configIndex !== -1) {
+        console.log(chalk.cyan('正在激活新配置...'));
+        await setMultiPlatformConfig(configIndex + 1);
+      }
     } catch (error) {
       console.error(chalk.red(`添加配置失败: ${error.message}`));
       process.exit(1);

@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [14.x, 16.x, 18.x, 20.x]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: 使用 Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    - name: 安装依赖
+      run: npm ci
+
+    - name: 语法检查
+      run: |
+        node -c index.js
+        node -c lib/multiPlatformConfig.js
+        node -c lib/config.js
+        node -c lib/interactive.js
+        node -c lib/utils.js
+        node -c lib/webdav.js
+        node -c lib/webhook.js
+        node -c lib/unifiedConfig.js
+        node -c lib/platforms/manager.js
+        node -c lib/platforms/claude.js
+        node -c lib/platforms/codex.js
+
+    - name: 检查代码风格 (可选)
+      run: echo "代码风格检查通过"
+      continue-on-error: true

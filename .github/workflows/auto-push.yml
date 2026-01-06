@@ -1,0 +1,50 @@
+name: Auto Push
+
+# 此工作流用于在特定事件时自动推送代码
+# 注意：一般不推荐自动推送，建议手动审核后推送
+
+on:
+  # 取消自动触发，需要手动触发
+  workflow_dispatch:
+    inputs:
+      commit_message:
+        description: '提交信息'
+        required: true
+        default: 'chore: 自动更新'
+
+jobs:
+  auto-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        fetch-depth: 0
+
+    - name: 配置 Git
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+
+    - name: 检查是否有变更
+      id: check_changes
+      run: |
+        if [ -n "$(git status --porcelain)" ]; then
+          echo "has_changes=true" >> $GITHUB_OUTPUT
+          echo "检测到变更"
+        else
+          echo "has_changes=false" >> $GITHUB_OUTPUT
+          echo "没有检测到变更"
+        fi
+
+    - name: 提交并推送
+      if: steps.check_changes.outputs.has_changes == 'true'
+      run: |
+        git add .
+        git commit -m "${{ github.event.inputs.commit_message }}"
+        git push
+
+    - name: 无变更提示
+      if: steps.check_changes.outputs.has_changes == 'false'
+      run: echo "没有需要提交的变更"
