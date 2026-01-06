@@ -12,14 +12,20 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: 安装 pnpm
+      uses: pnpm/action-setup@v2
+      with:
+        version: 8
+
     - name: 设置 Node.js
       uses: actions/setup-node@v3
       with:
         node-version: '18'
         registry-url: 'https://registry.npmjs.org'
+        cache: 'pnpm'
 
     - name: 安装依赖
-      run: npm ci
+      run: pnpm install --frozen-lockfile
 
     - name: 语法检查
       run: |
@@ -27,7 +33,7 @@ jobs:
         node -c lib/multiPlatformConfig.js
 
     - name: 发布到 NPM
-      run: npm publish
+      run: pnpm publish --no-git-checks
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
