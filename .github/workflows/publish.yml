@@ -1,9 +1,12 @@
-name: Publish to NPM
+name: Manual Publish to NPM
 
 on:
-  release:
-    types: [created]
-  workflow_dispatch:  # 允许手动触发
+  workflow_dispatch:  # 仅允许手动触发
+    inputs:
+      version:
+        description: '版本号（可选，留空则使用 package.json 中的版本）'
+        required: false
+        type: string
 
 jobs:
   publish:
@@ -24,6 +27,13 @@ jobs:
         registry-url: 'https://registry.npmjs.org'
         cache: 'pnpm'
 
+    - name: 获取版本信息
+      id: version
+      run: |
+        PKG_VERSION=$(node -p "require('./package.json').version")
+        echo "package_version=$PKG_VERSION" >> $GITHUB_OUTPUT
+        echo "当前 package.json 版本: $PKG_VERSION"
+
     - name: 安装依赖
       run: pnpm install --frozen-lockfile
 
@@ -31,6 +41,7 @@ jobs:
       run: |
         node -c index.js
         node -c lib/multiPlatformConfig.js
+        node -c lib/config.js
 
     - name: 发布到 NPM
       run: pnpm publish --no-git-checks
@@ -40,5 +51,10 @@ jobs:
     - name: 通知发布成功
       if: success()
       run: |
-        echo "✅ 成功发布到 NPM"
-        echo "版本: $(node -p "require('./package.json').version")"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "✅ 手动发布到 NPM 成功！"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "版本: ${{ steps.version.outputs.package_version }}"
+        echo "NPM: https://www.npmjs.com/package/claude-code-switcher"
+        echo ""
+        echo "⚠️  注意: 这是手动发布，通常应该使用 /release skill 来自动发布"

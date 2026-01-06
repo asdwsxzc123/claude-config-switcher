@@ -1,4 +1,4 @@
-name: Release
+name: Release and Publish
 
 on:
   push:
@@ -6,16 +6,27 @@ on:
       - 'v*'  # 当推送 v 开头的 tag 时触发，例如 v1.2.0
 
 jobs:
-  create-release:
+  release-and-publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # 允许创建 Release
 
     steps:
     - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0  # 获取完整历史，用于生成 changelog
+
+    - name: 安装 pnpm
+      uses: pnpm/action-setup@v2
+      with:
+        version: 9
 
     - name: 设置 Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '18'
+        node-version: '20'
+        registry-url: 'https://registry.npmjs.org'
+        cache: 'pnpm'
 
     - name: 获取版本号
       id: get_version
@@ -27,27 +38,66 @@ jobs:
     - name: 生成更新日志
       id: changelog
       run: |
-        CHANGELOG=$(git log $(git describe --tags --abbrev=0 HEAD^)..HEAD --pretty=format:"- %s (%h)" --no-merges)
+        # 获取上一个 tag
+        PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+
+        if [ -z "$PREV_TAG" ]; then
+          # 如果是第一个 tag，获取所有提交
+          CHANGELOG=$(git log --pretty=format:"- %s (%h)" --no-merges)
+        else
+          # 获取两个 tag 之间的提交
+          CHANGELOG=$(git log ${PREV_TAG}..HEAD --pretty=format:"- %s (%h)" --no-merges)
+        fi
+
         echo "changelog<<EOF" >> $GITHUB_OUTPUT
         echo "$CHANGELOG" >> $GITHUB_OUTPUT
         echo "EOF" >> $GITHUB_OUTPUT
 
-    - name: 创建 GitHub Release
-      uses: actions/create-release@v1
+    - name: 安装依赖
+      run: pnpm install --frozen-lockfile
+
+    - name: 语法检查
+      run: |
+        node -c index.js
+        node -c lib/multiPlatformConfig.js
+        node -c lib/config.js
+
+    - name: 发布到 NPM
+      run: pnpm publish --no-git-checks
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+    - name: 创建 GitHub Release
+      uses: softprops/action-gh-release@v1
       with:
-        tag_name: ${{ steps.get_version.outputs.tag }}
-        release_name: Release ${{ steps.get_version.outputs.tag }}
+        name: Release ${{ steps.get_version.outputs.tag }}
         body: |
-          ## 更新内容
+          ## 📦 更新内容
 
           ${{ steps.changelog.outputs.changelog }}
 
-          ## 安装方式
+          ## 🚀 安装方式
 
           ```bash
           npm install -g claude-code-switcher@${{ steps.get_version.outputs.version }}
+          # 或
+          pnpm add -g claude-code-switcher@${{ steps.get_version.outputs.version }}
           ```
+
+          ## 📖 文档
+
+          查看 [README](https://github.com/${{ github.repository }}) 了解使用方法。
         draft: false
         prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: 通知发布成功
+      if: success()
+      run: |
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "✅ 发布成功！"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "版本: ${{ steps.get_version.outputs.version }}"
+        echo "NPM: https://www.npmjs.com/package/claude-code-switcher"
+        echo "Release: https://github.com/${{ github.repository }}/releases/tag/${{ steps.get_version.outputs.tag }}"
