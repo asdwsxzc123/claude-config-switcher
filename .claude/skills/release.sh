@@ -37,19 +37,22 @@ echo -e "${CYAN}当前版本: ${YELLOW}v${CURRENT_VERSION}${NC}\n"
 
 # 检查 git 状态
 echo -e "${BLUE}=== 检查 Git 状态 ===${NC}"
+HAS_CHANGES=false
 if [ -n "$(git status --porcelain)" ]; then
     echo -e "${YELLOW}发现未提交的变更:${NC}"
     git status --short
     echo
+    HAS_CHANGES=true
+
+    # 显示改动统计
+    echo -e "${BLUE}=== 改动统计 ===${NC}"
+    git diff --stat
+    echo
 else
     echo -e "${GREEN}工作区干净，没有未提交的变更${NC}"
-    echo -e "${YELLOW}提示: 如果没有需要发布的内容，请先进行修改${NC}"
-    exit 0
+    echo -e "${CYAN}将直接升级版本并推送${NC}"
+    echo
 fi
-
-# 显示最近的改动
-echo -e "\n${BLUE}=== 最近的改动 ===${NC}"
-git diff --stat
 
 # 获取版本类型参数
 VERSION_TYPE="${ARGS[0]}"
@@ -82,26 +85,33 @@ fi
 
 echo -e "\n${CYAN}版本升级类型: ${YELLOW}${VERSION_TYPE}${NC}"
 
-# 询问提交信息
-if [ "$AUTO_CONFIRM" = false ]; then
-    echo -e "\n${CYAN}请输入提交信息 (留空使用默认):${NC}"
-    read -p "> " COMMIT_MSG
-fi
+# 询问提交信息（仅在有变更时）
+if [ "$HAS_CHANGES" = true ]; then
+    if [ "$AUTO_CONFIRM" = false ]; then
+        echo -e "\n${CYAN}请输入提交信息 (留空使用默认):${NC}"
+        read -p "> " COMMIT_MSG
+    fi
 
-if [ -z "$COMMIT_MSG" ]; then
-    # 根据版本类型生成默认提交信息
-    case $VERSION_TYPE in
-        patch) COMMIT_MSG="fix: 修复问题和优化" ;;
-        minor) COMMIT_MSG="feat: 添加新功能" ;;
-        major) COMMIT_MSG="feat!: 重大更新" ;;
-    esac
+    if [ -z "$COMMIT_MSG" ]; then
+        # 根据版本类型生成默认提交信息
+        case $VERSION_TYPE in
+            patch) COMMIT_MSG="fix: 修复问题和优化" ;;
+            minor) COMMIT_MSG="feat: 添加新功能" ;;
+            major) COMMIT_MSG="feat!: 重大更新" ;;
+        esac
+    fi
+else
+    COMMIT_MSG=""
 fi
 
 # 确认发布
 if [ "$AUTO_CONFIRM" = false ]; then
     echo -e "\n${BLUE}=== 发布确认 ===${NC}"
-    echo -e "提交信息: ${GREEN}${COMMIT_MSG}${NC}"
+    if [ "$HAS_CHANGES" = true ]; then
+        echo -e "提交信息: ${GREEN}${COMMIT_MSG}${NC}"
+    fi
     echo -e "版本类型: ${YELLOW}${VERSION_TYPE}${NC}"
+    echo -e "当前版本: ${YELLOW}v${CURRENT_VERSION}${NC}"
     echo
     read -p "确认发布? (y/N): " confirm
 
@@ -111,8 +121,11 @@ if [ "$AUTO_CONFIRM" = false ]; then
     fi
 else
     echo -e "\n${BLUE}=== 自动发布模式 ===${NC}"
-    echo -e "提交信息: ${GREEN}${COMMIT_MSG}${NC}"
+    if [ "$HAS_CHANGES" = true ]; then
+        echo -e "提交信息: ${GREEN}${COMMIT_MSG}${NC}"
+    fi
     echo -e "版本类型: ${YELLOW}${VERSION_TYPE}${NC}"
+    echo -e "当前版本: ${YELLOW}v${CURRENT_VERSION}${NC}"
     echo
 fi
 
