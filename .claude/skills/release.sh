@@ -83,8 +83,10 @@ fi
 echo -e "\n${CYAN}版本升级类型: ${YELLOW}${VERSION_TYPE}${NC}"
 
 # 询问提交信息
-echo -e "\n${CYAN}请输入提交信息 (留空使用默认):${NC}"
-read -p "> " COMMIT_MSG
+if [ "$AUTO_CONFIRM" = false ]; then
+    echo -e "\n${CYAN}请输入提交信息 (留空使用默认):${NC}"
+    read -p "> " COMMIT_MSG
+fi
 
 if [ -z "$COMMIT_MSG" ]; then
     # 根据版本类型生成默认提交信息

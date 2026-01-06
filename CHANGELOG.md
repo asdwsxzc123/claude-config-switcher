@@ -1,5 +1,28 @@
-## 1.0.3
-- 支持备份和恢复 CLAUDE.md 文件到 WebDAV
+# Changelog
 
-## 1.0.2
-- 支持显示自定义设置的 COST,作为剩余费率
+All notable changes to this project will be documented in this file.
+
+## [1.2.0] - 2026-01-06
+
+### Added
+- 🚀 **自动激活功能**: `ccs add` 命令添加配置后自动激活，无需手动执行 `ccs use`
+- 🔍 **智能环境变量检查**: 区分 shell 配置文件和 settings.json 中的环境变量，只警告真正会覆盖配置的环境变量
+- ⚙️ **GitHub Actions 工作流**:
+  - CI 工作流：多版本 Node.js 测试
+  - 自动发布到 NPM
+  - 自动创建 GitHub Release
+  - 手动推送支持
+- 🛠️ **Claude Code Skills**:
+  - `/release` skill：自动化版本发布流程
+  - `/push` skill：快速推送代码
+
+### Changed
+- 优化 `add` 命令的用户体验
+- 改进环境变量检查逻辑，减少误报
+
+### Fixed
+- 修复环境变量检查会误报 settings.json 中配置的问题
+
+## [1.1.5] - Previous releases
+
+查看 Git 提交历史了解更多信息。
