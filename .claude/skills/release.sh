@@ -131,24 +131,33 @@ fi
 
 echo -e "\n${BLUE}=== 开始发布流程 ===${NC}\n"
 
-# 1. 提交代码
-echo -e "${CYAN}[1/4] 提交代码...${NC}"
-git add .
-git commit -m "$COMMIT_MSG"
-echo -e "${GREEN}✓ 代码已提交${NC}\n"
+STEP=1
+TOTAL_STEPS=3
+
+# 1. 提交代码（仅在有变更时）
+if [ "$HAS_CHANGES" = true ]; then
+    echo -e "${CYAN}[${STEP}/4] 提交代码...${NC}"
+    git add .
+    git commit -m "$COMMIT_MSG"
+    echo -e "${GREEN}✓ 代码已提交${NC}\n"
+    STEP=$((STEP + 1))
+    TOTAL_STEPS=4
+fi
 
 # 2. 升级版本
-echo -e "${CYAN}[2/4] 升级版本...${NC}"
+echo -e "${CYAN}[${STEP}/${TOTAL_STEPS}] 升级版本...${NC}"
 NEW_VERSION=$(npm version $VERSION_TYPE)
 echo -e "${GREEN}✓ 版本已升级: ${YELLOW}${NEW_VERSION}${NC}\n"
+STEP=$((STEP + 1))
 
 # 3. 推送到远程
-echo -e "${CYAN}[3/4] 推送到 GitHub...${NC}"
+echo -e "${CYAN}[${STEP}/${TOTAL_STEPS}] 推送到 GitHub...${NC}"
 git push
 echo -e "${GREEN}✓ 代码已推送${NC}\n"
+STEP=$((STEP + 1))
 
 # 4. 推送标签
-echo -e "${CYAN}[4/4] 推送标签...${NC}"
+echo -e "${CYAN}[${STEP}/${TOTAL_STEPS}] 推送标签...${NC}"
 git push --tags
 echo -e "${GREEN}✓ 标签已推送${NC}\n"
 
