@@ -11,6 +11,7 @@
 参数：
 - `version-type` (可选): `patch` | `minor` | `major`
   - 不提供时会交互式询问
+  - 提供时自动确认，无需手动输入
 
 ## Steps
 

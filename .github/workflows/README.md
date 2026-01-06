@@ -128,8 +128,18 @@ git push && git push --tags
 
 在 GitHub 仓库设置中添加以下 Secrets：
 
-| Secret 名称 | 用途 | 获取方式 |
-|------------|------|---------|
-| `NPM_TOKEN` | 发布到 NPM | https://www.npmjs.com/settings/YOUR_USERNAME/tokens |
+| Secret 名称 | 用途 | 类型 | 获取方式 |
+|------------|------|------|---------|
+| `NPM_TOKEN` | 发布到 NPM | **Granular Access Token** | [查看详细配置指南](./NPM_TOKEN_SETUP.md) |
 
-配置路径：`Settings` -> `Secrets and variables` -> `Actions` -> `New repository secret`
+**⚠️ 重要**：必须使用 **Granular Access Token**（不是 Classic Token），并启用 "Allow publishing with 2FA enabled" 选项。
+
+**快速配置**：
+1. 访问：https://www.npmjs.com/settings/YOUR_USERNAME/tokens
+2. 创建 **Granular Access Token**
+3. 勾选 ✅ **"Allow publishing with 2FA enabled"**
+4. 在 GitHub 仓库设置中添加为 `NPM_TOKEN` secret
+
+📖 **详细说明**：请参阅 [NPM_TOKEN_SETUP.md](./NPM_TOKEN_SETUP.md)
+
+配置路径：`Settings` → `Secrets and variables` → `Actions` → `New repository secret`
