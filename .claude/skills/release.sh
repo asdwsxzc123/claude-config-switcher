@@ -107,7 +107,7 @@ fi
 
 # 2. 升级版本
 echo -e "${CYAN}[${STEP}/${TOTAL_STEPS}] 升级版本...${NC}"
-NEW_VERSION=$(npm version $VERSION_TYPE)
+NEW_VERSION=$(npm version $VERSION_TYPE -m "chore: release %s")
 echo -e "${GREEN}✓ 版本已升级: ${YELLOW}${NEW_VERSION}${NC}\n"
 STEP=$((STEP + 1))
 
