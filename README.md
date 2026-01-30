@@ -35,6 +35,54 @@ ccs add my-api sk-xxxxxxxxxxxxxxxx https://api.example.com
 ```
 
 **注意：** 添加配置后会自动切换到新配置，无需手动执行 `ccs use` 命令。
+
+#### 快速配置多平台
+
+```bash
+ccs set <key> <url>
+```
+
+使用相同的 API 配置快速设置 Claude 和 Codex 平台。
+
+**功能特点：**
+- 交互式选择要配置的平台（默认全选 Claude 和 Codex）
+- 两个平台使用相同的 API Key 和 URL
+- 默认别名分别为 `claude` 和 `codex`
+- 如果存在同名配置，会询问是否覆盖
+- 配置完成后显示配置详情
+- 可选将环境变量写入 shell 配置文件（`.zshrc` 或 `.bashrc`）
+
+**使用示例：**
+
+```bash
+ccs set sk-xxxxxxxxxxxxxxxx https://api.example.com
+```
+
+**输出示例：**
+
+```
+? 请选择要配置的平台: Claude, Codex
+✓ 已配置 Claude: claude
+✓ 已配置 Codex: codex
+
+正在激活配置...
+成功切换到Codex配置: codex
+
+已配置的平台:
+
+[CLAUDE]
+  别名: claude
+  URL: https://api.example.com
+  Key: sk-xxxxxx...xxx
+
+[CODEX]
+  别名: codex
+  URL: https://api.example.com
+  Key: sk-xxxxxx...xxx
+
+? 是否将环境变量添加到 shell 配置文件？ (y/N)
+```
+
 #### 2. 获取API配置列表
 ```bash
 ccs ls
