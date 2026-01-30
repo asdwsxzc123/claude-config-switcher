@@ -95,7 +95,7 @@ ccs use 2
   "config": {
     "env": {
       "ANTHROPIC_AUTH_TOKEN": "sk-xxxxxx",
-      "ANTHROPIC_BASE_URL": "https://zone.veloera.org/pg",
+      "ANTHROPIC_BASE_URL": "https://xxx/pg",
       "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"
     },
     "permissions": {

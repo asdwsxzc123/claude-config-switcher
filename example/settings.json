@@ -1,6 +1,6 @@
 {
   "env": {
-    "ANTHROPIC_BASE_URL": "https://zone.veloera.org/pg",
+    "ANTHROPIC_BASE_URL": "https://xxx/pg",
     "ANTHROPIC_AUTH_TOKEN": "sk-sA59aXNTweTIWtiuSTLnEGA3L8gSzHYgJApvgfSNyf9F6mfJ",
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"
   },
