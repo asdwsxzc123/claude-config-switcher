@@ -169,6 +169,7 @@ program
 
     let lastConfiguredPlatform = null;
     let lastConfiguredAlias = null;
+    let claudeUrl = null; // 保存 Claude 平台处理后的 URL（用于环境变量）
 
     // 2. 为每个选中的平台配置
     for (const platform of platforms) {
@@ -199,10 +200,27 @@ program
 
       // 添加/覆盖配置（addConfig 内部会处理覆盖逻辑）
       try {
-        adapter.addConfig(alias, apiKey, url);
+        // 根据平台类型添加 URL 后缀
+        let platformUrl = url.replace(/\/+$/, ''); // 移除末尾斜杠
+        if (platform === 'claude') {
+          if (!platformUrl.endsWith('/api')) {
+            platformUrl += '/api';
+          }
+        } else if (platform === 'codex') {
+          if (!platformUrl.endsWith('/openai/v1')) {
+            platformUrl += '/openai/v1';
+          }
+        }
+
+        adapter.addConfig(alias, apiKey, platformUrl);
         console.log(chalk.green(`✓ 已配置 ${adapter.getDisplayName()}: ${alias}`));
         lastConfiguredPlatform = platform;
         lastConfiguredAlias = alias;
+
+        // 保存 Claude 平台的 URL（用于后续写入环境变量）
+        if (platform === 'claude') {
+          claudeUrl = platformUrl;
+        }
       } catch (error) {
         console.error(chalk.red(`配置 ${adapter.getDisplayName()} 失败: ${error.message}`));
       }
@@ -269,11 +287,11 @@ program
           shellConfigFile = path.join(os.homedir(), '.zshrc');
         }
 
-        // 生成环境变量配置
+        // 生成环境变量配置（使用处理后的 Claude URL）
         const envLines = [
           '',
           '# Claude Code Switcher - API 配置',
-          `export ANTHROPIC_BASE_URL="${url}"`,
+          `export ANTHROPIC_BASE_URL="${claudeUrl || url}"`,
           `export ANTHROPIC_AUTH_TOKEN="${apiKey}"`,
           ''
         ].join('\n');

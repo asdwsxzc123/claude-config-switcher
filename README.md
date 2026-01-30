@@ -12,6 +12,9 @@
 ## 安装
 ```bash
 npm install -g claude-code-switcher
+
+# 发布
+npm publish --otp=<你的6位验证码>
 ```
 ## 使用文档
 #### 1. 添加新的API配置
